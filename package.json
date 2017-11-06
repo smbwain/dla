@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "node.js data loader with caching and support of lists",
   "main": "dist/index.js",
-  "types": "dist/types.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "clean": "rm -rf .nyc_output coverage dist",
     "build": "tsc",
