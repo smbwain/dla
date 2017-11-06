@@ -43,7 +43,7 @@ const collection = new Collection<User>({
     loadFew: async (ids) => {
         // load data by ids from your db... or somewhere
         // return { id1: User, id2: User, ... };
-    }
+    },
 });
 ```
 
@@ -138,25 +138,25 @@ So it doesn't send more than one request for the same element.
 Even if you try to load it few times simultaneously.
 
 Because of that, **it's important to create new collection instance for each context**.
-E.g. if you use it with graphql or restful API, you may want to crete collection instance for each user request.
+E.g. if you use it with graphql or restful API, you may want to create collection instance for each user request.
 
 ### External cache  
 
 _dla_ **does not** uses external cache by default.
 To use cache you should pass property _cache_ to constructor of _Collection_ or _ListableCollection_.
 
-You could use one of ready to use cache implementation or implement your own.
+You could use one of ready to use cache implementations or implement your own.
 
 ### Invalidate cache of object
 
 ```typescript
-collection.clearCache(47)
+collection.clearCache('47')
 ```
 
 or
 
 ```typescript
-collection.clearCache([47, 48, 49])
+collection.clearCache(['47', '48', '49'])
 ```
 
 ### Invalidating cache for lists of elements
@@ -168,7 +168,7 @@ all caches of lists which contain this item are invalidated automatically.
 
 However, sometimes it's not enough.
 For example: user clicks "like" button on some item. You want to invalidate list of his favourite items.
-But no one of items which currently placed in his favourites list isn't changed during this action.
+But no one of items which currently placed in his favourites list has been changed during this action.
 
 In this case you could use invalidation keys.
 
@@ -183,11 +183,11 @@ Let's say, you have following collection:
 
 ```typescript
 interface Item {
-    name: string
-    price: number
+    name: string;
+    price: number;
 }
 interface ItemFilter {
-    favouriteForUser?: string // user id
+    favouriteForUser?: string; // user id
 }
 
 const collection = new ListableCollection<Item, ItemFilter>({
@@ -195,47 +195,46 @@ const collection = new ListableCollection<Item, ItemFilter>({
         // return { id1: Item, id2: Item, ... };
     },
     loadList: filter => {
-        if(filter.favouriteForUser) {
+        if (filter.favouriteForUser) {
             // loads items from users favourites list
             // return [ Item, Item, ... ]
         }
-    }
+    },
 });
 ```
 
 First for all, your should define method _listCacheInvalidators_ in ListableCollection options which takes filter and
-returns list of invalidation keys.
+returns list of invalidators.
 
 ```typescript
 // ...
 const collection = new ListableCollection<Item, ItemFilter>({
-    cache: new MemCache(),
+    cache: new MemoryCache(),
     loadFew: ids => {
         // return { id1: Item, id2: Item, ... };
     },
     loadList: filter => {
-        if(filter.favouriteForUser) {
+        if (filter.favouriteForUser) {
             // loads items from users favourites list
             // return [ Item, Item, ... ]
         }
     },
     listCacheInvalidators: filter => {
-        if(filter.favouriteForUser) {
+        if (filter.favouriteForUser) {
             return [`favouriteForUser-${filter.favouriteForUser}`]
-            // loads items from users favourites list
-            // return [ Item, Item, ... ]
         }
-    }
+        return [];
+    },
 });
 ```
 
 Now, any time you load favourites list, doing:
 
 ```typescript
-collection.loadList({favouriteForUser: '47'}).then(items => ...)
+collection.loadList({favouriteForUser: '48'}).then(items => ...)
 ```
 
-_dla_ caches this list and "attaches" invalidator "favouriteForUser-47" to this cache.
+_dla_ caches this list and "attaches" invalidator "favouriteForUser-48" to this cache.
 Whenever, user clicks like/dislike button, you could just call:
 
 ```typescript
