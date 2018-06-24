@@ -4,23 +4,37 @@ import {MultiQuery} from './multi-query';
 import * as Types from './shared-types';
 
 export class Collection<V> implements Types.ICollection<V> {
+    protected extractId: Types.IdExtractor<V>;
+
     /**
      * External cache wrapper
      */
     protected objectCache: Cache<Types.ICacheElement<V>>;
-
-    private loadFew: Types.MultiLoader<V>;
 
     /**
      * Cache of objects requested during collection life
      */
     protected promiseCache: {[id: string]: Promise<V>} = {};
 
+    private loadFew: Types.MultiLoader<V>;
     private query: MultiQuery<V>;
 
     constructor(options: Types.ICollectionOptions<V>) {
+        this.extractId = options.extractId;
         if (options.loadFew) {
-            this.loadFew = options.loadFew;
+            const loadFew = options.loadFew;
+            this.loadFew = async (ids: string[]): Promise<Types.IMap<V>> => {
+                const loaded = await loadFew(ids);
+                if (Array.isArray(loaded)) {
+                    const res: Types.IMap<V> = {};
+                    for (const item of loaded) {
+                        res[this.extractId(item)] = item;
+                    }
+                    return res;
+                } else {
+                    return loaded;
+                }
+            };
         } else if (options.loadOne) {
             const loadOne = options.loadOne;
             this.loadFew = async (ids: string[]) => {

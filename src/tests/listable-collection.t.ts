@@ -29,6 +29,7 @@ function init() {
     }];
     const result = {
         collection: new ListableCollection<IHuman, IHumanFilter>({
+            extractId: (human) => human.id,
             loadOne: (id) => {
                 result.objectsCounter ++;
                 return new Promise((resolve) => {

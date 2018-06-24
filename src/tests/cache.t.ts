@@ -23,6 +23,7 @@ function initCollection(cache) {
     const result = {
         collection: new Collection<Item>({
             cache,
+            extractId: (item) => item.id,
             loadFew: (ids) => {
                 result.queryCounter++;
                 result.objectsCounter += ids.length;
@@ -67,6 +68,7 @@ function initListableCollection(cache) {
     const result = {
         collection: new ListableCollection<IHuman, IHumanFilter>({
             cache,
+            extractId: (human) => human.id,
             loadOne: (id) => {
                 result.objectsCounter++;
                 return new Promise((resolve) => {
@@ -87,7 +89,7 @@ function initListableCollection(cache) {
                     ),
                 };
             },
-            listCacheInvalidators: (filter) => {
+            invalidationTags: (filter) => {
                 const invalidators = [];
                 if ('sex' in filter) {
                     invalidators.push(`sex=${filter.sex}`);
@@ -250,7 +252,7 @@ describe('cache', () => {
         assert.equal(test1.objectsCounter, 0);
         assert.equal(test1.listsCounter, 2);
 
-        await test1.collection.invalidateListCache('sex=m');
+        await test1.collection.invalidateCacheTag('sex=m');
 
         assert.deepEqual( await test1.collection.getList({
             sex: 'm',
@@ -307,7 +309,7 @@ describe('cache', () => {
         assert.equal(test2.objectsCounter, 0);
         assert.equal(test2.listsCounter, 0);
 
-        test2.collection.invalidateListCache('sex=f');
+        test2.collection.invalidateCacheTag('sex=f');
         assert.deepEqual( await test2.collection.getList({
             sex: 'f',
         }), [{

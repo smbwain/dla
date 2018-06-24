@@ -53,10 +53,10 @@ export class MultiQuery<V> {
                     await this.cache.mload(Object.keys(this.resolvers), async (ids) => {
                         return mapObjectValues<V, Types.ICacheElement<V>>(await this.loadFew(ids), (object) => ({
                             ts: now,
-                            dt: object
+                            dt: object,
                         }));
                     }, {fast: true}),
-                    object => object.dt
+                    (object) => object.dt,
                 );
             } else {
                 res = await this.loadFew(Object.keys(this.resolvers));

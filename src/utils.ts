@@ -9,7 +9,10 @@ export function mapObjectKeys(obj: any, mapper: (name: string) => string): any {
     return res;
 }
 
-export function mapObjectValues<V1, V2>(obj: {[key: string]: V1}, mapper: (value: V1, name: string) => V2): {[key: string]: V2} {
+export function mapObjectValues<V1, V2>(
+    obj: {[key: string]: V1},
+    mapper: (value: V1, name: string) => V2,
+): {[key: string]: V2} {
     const res = {};
     for (const name in obj) {
         if (obj.hasOwnProperty(name)) {

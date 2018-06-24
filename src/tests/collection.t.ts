@@ -11,6 +11,7 @@ interface Item {
 function init() {
     const result = {
         collection: new Collection<Item>({
+            extractId: (item) => item.id,
             loadFew: (ids) => {
                 result.queryCounter++;
                 result.objectsCounter += ids.length;
