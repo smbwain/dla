@@ -1,13 +1,13 @@
 {
   "name": "dla",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "node.js data loader with caching and support of lists",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist coverage",
     "build": "tsc",
-    "test": "nyc mocha dist/tests",
+    "test": "jest",
     "lint": "tslint \"src/**/*\"",
     "prepublishOnly": "npm run lint && npm run clean && npm run build && npm test"
   },
@@ -18,31 +18,15 @@
   "author": "Roman Ditchuk",
   "license": "ISC",
   "devDependencies": {
-    "@types/mocha": "^5.2.3",
+    "@types/jest": "^23.1.1",
     "@types/node": "^10.3.5",
-    "mocha": "^5.2.0",
-    "nyc": "^12.0.2",
+    "jest": "^23.1.0",
     "source-map-support": "^0.5.6",
+    "ts-jest": "^22.4.6",
     "tslint": "^5.10.0",
     "typescript": "^2.9.2"
   },
   "dependencies": {
     "object-hash": "^1.3.0"
-  },
-  "nyc": {
-    "extension": [
-      ".ts",
-      ".tsx"
-    ],
-    "include": [
-      "**/*"
-    ],
-    "exclude": [
-      "**/*.d.ts"
-    ],
-    "reporter": [
-      "html"
-    ],
-    "all": false
   }
 }
